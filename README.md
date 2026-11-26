@@ -7,7 +7,7 @@
 [![build](https://github.com/orion-musica/timer-tom-FM-1/actions/workflows/build.yml/badge.svg)](https://github.com/orion-musica/timer-tom-FM-1/actions/workflows/build.yml)
 ![license](https://img.shields.io/badge/license-GPL--3.0%20%2B%20SDK%20exception-43523d)
 ![device](https://img.shields.io/badge/device-M--VAVE%20FM--1-43523d)
-![status](https://img.shields.io/badge/status-beta%200.1%20·%20tested%20on%20FM--1-c7a800)
+![status](https://img.shields.io/badge/status-beta%200.1%2C%20tested%20on%20FM--1-43523d)
 
 [**Website & web installer**](https://orion-musica.github.io/timer-tom-FM-1/) ·
 [Manual](https://orion-musica.github.io/timer-tom-FM-1/manual/) ·
