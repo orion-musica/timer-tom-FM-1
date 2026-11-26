@@ -7,7 +7,7 @@
 [![build](https://github.com/orion-musica/timer-tom-FM-1/actions/workflows/build.yml/badge.svg)](https://github.com/orion-musica/timer-tom-FM-1/actions/workflows/build.yml)
 ![license](https://img.shields.io/badge/license-GPL--3.0%20%2B%20SDK%20exception-43523d)
 ![device](https://img.shields.io/badge/device-M--VAVE%20FM--1-43523d)
-![status](https://img.shields.io/badge/status-beta%200.1-c7a800)
+![status](https://img.shields.io/badge/status-beta%200.1%20·%20tested%20on%20FM--1-c7a800)
 
 [**Website & web installer**](https://orion-musica.github.io/timer-tom-FM-1/) ·
 [Manual](https://orion-musica.github.io/timer-tom-FM-1/manual/) ·
@@ -22,10 +22,9 @@
 ---
 
 > [!WARNING]
-> **Timer Tom 0.1 is a beta that has not been tried on the device yet.** It is a fork of
-> [Drum Peter](https://github.com/orion-musica/6210-FM-1), which is tested on an original M-VAVE FM-1
-> (FCC ID: 2ARCP-FM1), and only its app layer changes. Every build passes host tests that run its real
-> screen code and render its sound. Back up your projects, voices and samples before installing.
+> **Timer Tom 0.1 is a beta, tested on hardware.** It has passed testing on an original M-VAVE FM-1
+> (FCC ID: 2ARCP-FM1). Every build also passes host tests that run its real screen code and render its
+> sound. Back up your projects, voices and samples before installing.
 > The web installer can always put the original V15 firmware back.
 
 ## What it is
