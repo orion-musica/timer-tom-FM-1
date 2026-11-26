@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timer Tom manual</title>
+<meta name="description" content="Manual for Timer Tom, four kitchen timers for the M-VAVE FM-1.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#c7f0d8;--panel:#b5e2c4;--line:#8fb49a;--ink:#43523d;--text:#2b3627;--dim:#4d5e48;--pixel:'Silkscreen',monospace;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:16px;line-height:1.65}
+a{color:var(--text);text-decoration-thickness:2px}a:hover{color:#000}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+nav{border-bottom:3px solid var(--ink)}
+nav .bar{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:18px;min-height:56px;flex-wrap:wrap}
+nav .brand{font-family:var(--pixel);font-weight:700;font-size:20px;text-decoration:none;letter-spacing:1px}
+nav .links{display:flex;gap:16px;margin-left:auto;font-size:14px;flex-wrap:wrap}
+nav .links a{color:var(--dim);text-decoration:none}
+.layout{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:40px}
+aside{flex:1 1 220px;max-width:260px;padding:32px 0}
+aside h2{font-family:var(--pixel);font-size:14px;letter-spacing:2px;margin:0 0 10px}
+aside ol{margin:0;padding-left:22px;font-size:14px}
+aside li{margin:4px 0}
+main{flex:999 1 560px;min-width:0;padding:32px 0 64px}
+h1{font-family:var(--pixel);font-size:clamp(34px,6vw,56px);line-height:1;margin:0 0 12px;letter-spacing:1px}
+h2{font-family:var(--pixel);font-size:24px;margin:48px 0 12px;letter-spacing:1px;padding-top:16px;border-top:3px solid var(--ink)}
+h3{font-family:var(--pixel);font-size:15px;margin:24px 0 6px;letter-spacing:1px}
+p,li{max-width:760px}
+kbd{border:2px solid var(--ink);padding:0 6px;font-family:var(--pixel);font-size:12px;white-space:nowrap;background:var(--panel)}
+code{background:var(--panel);padding:1px 6px}
+.lead{font-size:18px;color:var(--dim);margin:0 0 20px}
+.box{border:3px solid var(--ink);background:var(--panel);padding:14px 18px;margin:16px 0;max-width:780px}
+.table{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;font-size:15px;min-width:520px;width:100%}
+th,td{text-align:left;padding:9px 12px;border-bottom:2px dashed var(--line);vertical-align:top}
+th{font-family:var(--pixel);font-weight:400;font-size:12px;letter-spacing:1px;border-bottom:3px solid var(--ink)}
+figure{margin:16px 0;max-width:360px}
+figure img{display:block;width:100%;height:auto;image-rendering:pixelated;border:4px solid var(--ink)}
+figcaption{font-size:14px;color:var(--dim);margin-top:6px}
+footer{border-top:3px solid var(--ink);padding:24px;font-size:14px;color:var(--dim);text-align:center}
+</style>
+</head>
+<body>
+<nav aria-label="Main">
+  <div class="bar">
+    <a class="brand" href="../">TIMER TOM</a>
+    <div class="links"><a href="../">Home</a><a href="../install/">Install</a><a href="#lights">Lights</a><a href="#help">Help</a></div>
+  </div>
+</nav>
+<div class="layout">
+<aside aria-label="Contents">
+  <h2>CONTENTS</h2>
+  <ol>
+    <li><a href="#start">First start</a></li>
+    <li><a href="#screen">The KITCHEN page</a></li>
+    <li><a href="#set">Setting a timer</a></li>
+    <li><a href="#icons">Dish icons</a></li>
+    <li><a href="#run">Start, pause, all at once</a></li>
+    <li><a href="#ready">When a timer is ready</a></li>
+    <li><a href="#reset">Reset and clear</a></li>
+    <li><a href="#keys">Key loops</a></li>
+    <li><a href="#tick">Rhythm and tick</a></li>
+    <li><a href="#lights">Lights</a></li>
+    <li><a href="#help">Troubleshooting</a></li>
+  </ol>
+</aside>
+<main>
+<h1>Manual</h1>
+<p class="lead">Timer Tom 0.1 BETA for the M-VAVE FM-1. Built on FM1 Open V14.</p>
+<div class="box"><strong>Names used here.</strong> Buttons are written like <kbd>PLAY</kbd>. The seven encoders are <kbd>SELECT</kbd>, <kbd>ALGORITHM</kbd>, <kbd>PRESETS</kbd> and <kbd>K1</kbd>–<kbd>K4</kbd> (the four knobs under the screen). The keyboard has 16 white and 11 black keys.</div>
+
+<h2 id="start">1. First start</h2>
+<p>After the start screen (an hourglass runs while the engine starts; any key skips it) the KITCHEN page opens with four empty timers. Nothing is loaded from your projects: Timer Tom sets up its own three sounds every time it starts.</p>
+
+<h2 id="screen">2. The KITCHEN page</h2>
+<p>It is the only page and it never hides a timer. From the top:</p>
+<ul>
+  <li><b>Header</b>: TIMER TOM, the loop sound, the mode (RHYTHM, TICK 1, TICK 2, SILENT), the running loop (<code>L13</code>) and the octave (when not 0) and a small hourglass of the timer that ends first.</li>
+  <li><b>Four rows</b>, one per timer: the dish icon, the time left in big digits (<code>MM:SS</code>, or <code>H:MM:SS</code> from one hour), then <code>K1 RUN</code> (knob and state: OFF, SET, RUN, PAUSE, READY!), the dish name and the time that was set. A bar under the digits empties like sand. The active timer is shown inverted.</li>
+  <li><b>Three hint lines</b>: which knobs do what, what <kbd>PLAY</kbd> will do now for the active timer, and the other buttons. Messages such as <code>TIMER 2 RUNS</code> appear inverted in the last line for a moment.</li>
+</ul>
+
+<h2 id="set">3. Setting a timer</h2>
+<p>Turn <kbd>K1</kbd>, <kbd>K2</kbd>, <kbd>K3</kbd> or <kbd>K4</kbd>. The timer becomes active and its time changes. The step grows with the time: 5 seconds up to 1 minute, 15 seconds up to 5 minutes, 30 seconds up to 15 minutes, 1 minute up to an hour, then 5 minutes. Turning fast speeds it up. The longest time is 4 hours. Turning back to <code>--:--</code> switches the timer off.</p>
+<p>A timer that runs, is paused or is ringing is only made active by the first click of its knob, so a quick touch never changes it. The next clicks change the time left (a running timer keeps running).</p>
+
+<h2 id="icons">4. Dish icons</h2>
+<p><kbd>PRESETS</kbd> changes the icon of the active timer: EGGS, PASTA, RICE, POTATO, SOUP, MEAT, FISH, PIZZA, CAKE, BREAD, VEG, TEA. The timers start as eggs, pasta, rice and meat.</p>
+
+<h2 id="run">5. Start, pause, all at once</h2>
+<p><kbd>PLAY</kbd> starts the active timer, or pauses it when it runs. Hold <kbd>PLAY</kbd>: a bar fills under the title and after 0.6 s every timer that is set or paused starts together. If none is waiting but some run, holding <kbd>PLAY</kbd> pauses all of them.</p>
+
+<h2 id="ready">6. When a timer is ready</h2>
+<p>It becomes the active timer, its row blinks, <code>TIMER 1 IS READY</code> appears, the keys flash and a short kalimba motif sounds every 2.4 seconds. Each timer has its own motif, so you can hear which dish is done. The chime stops after three minutes; the blinking goes on.</p>
+<p>Press <kbd>PLAY</kbd> or turn that timer's knob to stop it. The timer goes back to the time it was set to, ready for the next batch. Hold <kbd>PLAY</kbd> to stop every alarm at once.</p>
+
+<h2 id="reset">7. Reset and clear</h2>
+<p><kbd>REC</kbd> puts the active timer back to its set time (paused). Press <kbd>REC</kbd> again to clear it to <code>--:--</code>.</p>
+
+<h2 id="keys">8. Key loops</h2>
+<p>Each of the 27 keys starts its own background loop: four bars of eight long, tied pad notes that flow into each other. The loop is built from the key: its root is the key's own note an octave down, and it gets one of nine melodic contours, three rhythms and three scales (minor pentatonic, dorian, lydian), so every key sounds different. Another key switches the loop, the same key stops it. The key of the running loop blinks. <kbd>SELECT</kbd> chooses the sound: GLASS PAD, STRINGS, WARM PAD or CHOIR, all with a slow swell, a slow LFO on pitch and volume, a long tail and plenty of reverb. <kbd>OCT −</kbd> / <kbd>OCT +</kbd> transpose the loop by octaves.</p>
+
+<h2 id="tick">9. Rhythm and tick</h2>
+<p><kbd>ALGORITHM</kbd> chooses what you hear while timers run:</p>
+<ul>
+  <li><b>RHYTHM</b> (the default): every running timer plays one element of a soft ambient-techno groove at 118 BPM with a little swing: timer 1 a long dark kick, timer 2 an open hat on the offbeats, timer 3 a rim with dub delay, timer 4 a shaker in sixteenths. Start one timer and only its drum plays; start more and they join. A paused or ready timer drops out, so you also hear which one is done. The hourglass grain falls on every beat.</li>
+  <li><b>TICK 1 / TICK 2</b>: a soft dry clock tick once a second instead, alternately tick and tock, a little clearer in the last ten seconds.</li>
+  <li><b>SILENT</b>: no rhythm and no tick; loops and the alarm still play.</li>
+</ul>
+
+<h2 id="lights">10. Lights</h2>
+<p>The keys show an hourglass for the timer that ends first (the active one, if it runs). The 11 black keys are the upper bulb: they go out from the edges towards the middle as time passes. The 16 white keys are the lower bulb: they fill from the middle outwards. On every beat (RHYTHM) or every second (TICK) a grain falls: the middle black key flashes, then a middle white key. The key of the running loop blinks twice a second. <kbd>PLAY</kbd> lights for half of every second while timers run and blinks fast while one is ready. <kbd>REC</kbd> is lit when the active timer can be reset.</p>
+
+<h2 id="help">11. Troubleshooting</h2>
+<p><b>No sound.</b> Turn up MASTER. <b>No tick.</b> Turn <kbd>ALGORITHM</kbd>; the header shows the level. <b>Stuck notes.</b> <kbd>HOME</kbd> + <kbd>PLAY</kbd> stops every sound. <b>Back to stock.</b> Open the installer and choose Restore original V15.</p>
+</main>
+</div>
+<footer>Timer Tom by BULØKE · code written together with Claude · built on FM1 Open · GPL-3.0 with the FM1 SDK linking exception</footer>
+</body>
+</html>

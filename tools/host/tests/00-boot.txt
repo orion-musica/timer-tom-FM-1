@@ -1,0 +1,6 @@
+# Start screen with the Timer Tom branding, then the empty KITCHEN page.
+startup 700
+shot boot
+wait 1500
+shot kitchen
+expect-led 12 0

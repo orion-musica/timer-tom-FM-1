@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timer Tom: four kitchen timers for the M-VAVE FM-1</title>
+<meta name="description" content="Timer Tom turns the M-VAVE FM-1 into four kitchen timers with dish icons, hourglass key lights, a soft tick and ambient sounds on the keys. Free and open source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#c7f0d8;--panel:#b5e2c4;--line:#8fb49a;--ink:#43523d;--text:#2b3627;--dim:#4d5e48;--dark:#141a13;--glow:#d9ffe4;--off:#2a3627;--pixel:'Silkscreen',monospace;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:16px;line-height:1.6}
+a{color:var(--text);text-decoration-thickness:2px}a:hover{color:#000}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+code,kbd{background:var(--panel);padding:1px 6px;font-size:.95em;font-family:var(--mono)}
+kbd{border:2px solid var(--ink);padding:0 6px;font-family:var(--pixel);font-size:12px;white-space:nowrap}
+nav{border-bottom:3px solid var(--ink)}
+nav .wrap{display:flex;align-items:center;gap:18px;min-height:56px;flex-wrap:wrap}
+nav .brand{font-family:var(--pixel);font-weight:700;font-size:20px;text-decoration:none;letter-spacing:1px}
+nav .links{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap;font-size:14px}
+nav .links a{color:var(--dim);text-decoration:none}nav .links a:hover{color:var(--text)}
+header.hero{padding:56px 0 48px;border-bottom:1px solid var(--line)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center}
+.kicker{font-family:var(--pixel);letter-spacing:3px;font-size:14px;margin:0 0 12px}
+h1{font-family:var(--pixel);font-weight:700;font-size:clamp(44px,8vw,88px);line-height:.95;margin:0 0 8px;letter-spacing:2px}
+h1 small{display:block;font-size:.42em;letter-spacing:3px;margin-top:10px}
+.lead{font-size:18px;max-width:560px;margin:18px 0 28px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;font-family:var(--pixel);font-size:15px;text-decoration:none;border:3px solid var(--ink);color:var(--text);background:transparent}
+.btn.primary{background:var(--ink);color:var(--bg)}.btn.primary:hover{background:#000;color:var(--bg)}
+.btn:hover{background:var(--panel)}
+.device{background:var(--dark);padding:18px;border:4px solid #0b0f0a}
+.device img{display:block;width:100%;height:auto;image-rendering:pixelated;border:6px solid #0b0f0a}
+.keys{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;margin-top:14px}
+.keys span{height:22px;background:var(--off);border:1px solid #0b0f0a}
+.keys span.on{background:var(--glow);box-shadow:0 0 10px rgba(159,255,176,.65)}
+.note{font-size:13px;color:#9fc7ab;margin:10px 0 0;font-family:var(--mono)}
+h2{font-family:var(--pixel);font-size:28px;margin:0 0 14px;letter-spacing:1px}
+h3{font-family:var(--pixel);font-size:16px;margin:0 0 6px;letter-spacing:1px}
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+.sub{color:var(--dim);max-width:720px;margin:0 0 28px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{border:3px solid var(--ink);padding:18px;background:transparent}
+.card p{margin:0;font-size:15px}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+figure{margin:0}
+figure img{display:block;width:100%;height:auto;image-rendering:pixelated;border:4px solid var(--ink)}
+figcaption{font-size:14px;margin-top:8px;color:var(--dim)}
+figcaption b{font-family:var(--pixel);font-weight:400;color:var(--text);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:10px 12px;border-bottom:2px dashed var(--line);vertical-align:top}
+th{font-family:var(--pixel);font-weight:400;font-size:13px;letter-spacing:1px;border-bottom:3px solid var(--ink)}
+.led{display:inline-block;width:18px;height:18px;border:2px solid #0b0f0a;background:var(--off);vertical-align:-4px}
+.led.a{animation:steady 1s infinite}.led.play{animation:play .5s steps(1) infinite}
+.led.rec{animation:blink .125s steps(1) infinite}.led.save{animation:blink 1s steps(1) infinite}
+.led.dbl{animation:dbl 2s steps(1) infinite}.led.roll{animation:blink .25s steps(1) infinite}
+.led.head{animation:head 1.6s steps(1) infinite}.led.two{animation:blink .5s steps(1) infinite}
+@keyframes steady{0%,100%{background:var(--glow)}}
+@keyframes blink{0%{background:var(--glow)}50%{background:var(--off)}}
+@keyframes play{0%{background:var(--glow)}33%{background:var(--off)}}
+@keyframes dbl{0%{background:var(--glow)}4.5%{background:var(--off)}9%{background:var(--glow)}13.5%{background:var(--off)}}
+@keyframes head{0%{background:var(--off)}6%{background:var(--glow)}}
+@media (prefers-reduced-motion:reduce){.led{animation:none!important}.led.a,.led.play,.led.rec,.led.save,.led.dbl,.led.roll,.led.head,.led.two{background:var(--glow)}}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start}
+.steps li::before{content:counter(s);font-family:var(--pixel);font-size:22px;border:3px solid var(--ink);text-align:center;line-height:44px;height:50px}
+.steps p{margin:4px 0 0}
+.warn{border:3px solid var(--ink);background:var(--panel);padding:14px 18px;font-size:15px;max-width:780px}
+footer{padding:32px 0 56px;font-size:14px;color:var(--dim)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.panel{background:var(--dark);border:4px solid #0b0f0a;padding:20px;color:#c7f0d8;margin:0 0 28px}
+.panel .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;font-family:var(--pixel);font-size:13px}
+.panel .bar .sp{flex:1}
+.panel .bar button,.panel .tog{font-family:var(--pixel);font-size:13px;min-height:44px;padding:0 14px;background:transparent;color:#c7f0d8;border:2px solid #c7f0d8;cursor:pointer}
+.panel .bar button[aria-pressed="true"]{background:#c7f0d8;color:#141a13}
+.fns{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.fn{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fn button,.blk button,.wht button{font-family:var(--pixel);border:2px solid #0b0f0a;border-radius:5px;background:var(--off);color:#87a68e;cursor:pointer;padding:0}
+.fn button{min-height:46px;font-size:12px}
+.fn span{font-size:11px;color:#9fc7ab;line-height:1.3;overflow-wrap:anywhere}
+.lit{background:var(--glow)!important;color:#1d2a1c!important;box-shadow:0 0 14px rgba(159,255,176,.7)}
+.blk,.wht{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:6px}
+.blk{padding:0 3%;margin-bottom:6px}
+.blk button{min-height:34px;font-size:10px}
+.blk .gap{visibility:hidden}
+.wht button{min-height:54px;font-size:11px;width:100%}
+.panel .lcd{font-family:var(--pixel);font-size:14px;color:#c7f0d8;margin:14px 0 0;min-height:22px}
+@media (max-width:860px){.fns{grid-template-columns:repeat(4,minmax(0,1fr))}.blk button,.wht button{font-size:0}.blk,.wht{gap:3px}}
+@media (max-width:860px){.hero .wrap,.grid3,.grid2,.shots{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="./">TIMER TOM</a>
+    <div class="links">
+      <a href="#features">Features</a><a href="#screens">Screens</a><a href="#controls">Controls</a><a href="#lights">Lights</a><a href="#install">Install</a><a href="manual/">Manual</a><a id="gh" href="https://github.com/orion-musica/timer-tom-FM-1">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <p class="kicker">FIRMWARE · M-VAVE FM-1 · BETA 0.1</p>
+      <h1>TIMER<small>TOM</small></h1>
+      <p class="lead">Four kitchen timers for the FM-1. Turn a knob to set a time, pick a dish icon, press PLAY. While the food cooks, every running timer adds one layer of a soft ambient-techno groove, every key starts its own slowly breathing melodic loop, and the key lights run like an hourglass.</p>
+      <div class="actions">
+        <a class="btn primary" href="install/">INSTALL ›</a>
+        <a class="btn" href="manual/">MANUAL</a>
+        <a class="btn" href="downloads/timer-tom.fwsc" download>TIMER-TOM.FWSC</a>
+      </div>
+    </div>
+    <div class="device" aria-label="The Timer Tom KITCHEN page with the panel lights under it">
+      <img src="assets/running-leds.png" width="480" height="540" alt="Timer Tom KITCHEN page: eggs 00:16, soup 01:26, timer 3 off, meat 46:56 selected; under it the keyboard lights show the hourglass">
+      <p class="note">Real screen and lights, rendered by the firmware's own code in the host test. Top light row: buttons; bottom row: the 27 keys.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="features">
+  <div class="wrap">
+    <h2>What's inside</h2>
+    <p class="sub">One page, always on screen: all four timers, their dishes, what is left and which knobs and buttons do what right now.</p>
+    <div class="grid3">
+      <div class="card"><h3>Four timers</h3><p><kbd>K1</kbd>–<kbd>K4</kbd> set timers 1–4, up to 4 hours. Steps grow with the time: 5 s, 15 s, 30 s, 1 min, 5 min.</p></div>
+      <div class="card"><h3>Twelve dishes</h3><p><kbd>PRESETS</kbd> picks the icon of the active timer: eggs, pasta, rice, potato, soup, meat, fish, pizza, cake, bread, veg, tea.</p></div>
+      <div class="card"><h3>Start one or all</h3><p><kbd>PLAY</kbd> starts or pauses the active timer. Hold <kbd>PLAY</kbd> to start every timer that is set.</p></div>
+      <div class="card"><h3>Hourglass lights</h3><p>Black keys are the upper bulb, white keys the lower one. Every second a grain falls from the middle black key to the middle white key.</p></div>
+      <div class="card"><h3>One drum per timer</h3><p>Start timer 1 and a soft kick plays; timer 2 adds an open hat, 3 a rim with dub echo, 4 a shaker. Blurred with reverb, 118 BPM. Or a plain soft tick, on <kbd>ALGORITHM</kbd>.</p></div>
+      <div class="card"><h3>27 key loops</h3><p>Every key starts its own four-bar melodic loop of long tied pad notes; the same key stops it. Four sounds with a slow LFO on <kbd>SELECT</kbd>.</p></div>
+      <div class="card"><h3>Gentle alarm</h3><p>A ready timer chimes a short kalimba motif of its own, so you can hear which dish is done. Its row blinks.</p></div>
+      <div class="card"><h3>Hints on screen</h3><p>The three bottom lines always say which knobs and buttons work and what PLAY will do next.</p></div>
+      <div class="card"><h3>Phone-style screen</h3><p>The two-tone LCD look of DAW DANNY and DRUM PETER. No logos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>Screens</h2>
+    <p class="sub">Every picture is rendered by the firmware's own screen code in the host test.</p>
+    <div class="shots">
+      <figure><img src="assets/boot.png" width="480" height="480" loading="lazy" alt="Start screen: TIMER TOM, an hourglass, signal and battery bars"><figcaption><b>START</b> The sand runs while the engine starts.</figcaption></figure>
+      <figure><img src="assets/kitchen-empty.png" width="480" height="480" loading="lazy" alt="Four empty timers"><figcaption><b>KITCHEN</b> Four timers, nothing set yet.</figcaption></figure>
+      <figure><img src="assets/icon-set.png" width="480" height="480" loading="lazy" alt="Timer 2 set to 1:30 with the soup icon"><figcaption><b>SET</b> K2 to 1:30, PRESETS to the soup pot.</figcaption></figure>
+      <figure><img src="assets/hold-play.png" width="480" height="480" loading="lazy" alt="The bar under the title fills while PLAY is held"><figcaption><b>HOLD PLAY</b> The bar fills; at the end all timers start.</figcaption></figure>
+      <figure><img src="assets/running.png" width="480" height="480" loading="lazy" alt="Three timers running"><figcaption><b>RUNNING</b> Bars empty like sand; the header hourglass follows the first timer to end.</figcaption></figure>
+      <figure><img src="assets/ready.png" width="480" height="480" loading="lazy" alt="Timer 1 ready, its row blinks"><figcaption><b>READY</b> The row blinks and chimes until PLAY or its knob.</figcaption></figure>
+    </div>
+    <p style="margin-top:24px"><img src="assets/icons.png" alt="The twelve dish icons" style="max-width:100%;image-rendering:pixelated;border:4px solid var(--ink)"></p>
+  </div>
+</section>
+
+<section id="controls">
+  <div class="wrap">
+    <h2>Controls</h2>
+    <table>
+      <tr><th>Control</th><th>Action</th></tr>
+      <tr><td><kbd>K1</kbd>–<kbd>K4</kbd></td><td>Set timer 1–4 and make it the active timer. A running, paused or ringing timer is only selected by the first click, so it is never changed by accident. Turning it further changes the time left.</td></tr>
+      <tr><td><kbd>PRESETS</kbd></td><td>Icon of the active timer (12 dishes)</td></tr>
+      <tr><td><kbd>PLAY</kbd></td><td>Start / pause the active timer; on a ready timer: alarm off</td></tr>
+      <tr><td><kbd>PLAY</kbd> held</td><td>All alarms off, or start every set timer, or pause all running ones</td></tr>
+      <tr><td><kbd>REC</kbd></td><td>Reset the active timer to its time; press again to clear it</td></tr>
+      <tr><td><kbd>SELECT</kbd></td><td>Sound of the loops: glass pad, strings, warm pad, choir</td></tr>
+      <tr><td><kbd>ALGORITHM</kbd></td><td>SILENT, TICK 1, TICK 2, RHYTHM (one drum per running timer)</td></tr>
+      <tr><td>Keys</td><td>Start that key's loop; the same key stops it</td></tr>
+      <tr><td><kbd>OCT −</kbd> / <kbd>OCT +</kbd></td><td>Transpose the loop (−2 … +2 octaves)</td></tr>
+      <tr><td><kbd>HOME</kbd> + <kbd>PLAY</kbd></td><td>Stop all sounds</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="lights">
+  <div class="wrap">
+    <h2>Lights</h2>
+    <table>
+      <tr><th>Light</th><th>Rhythm</th><th>Means</th></tr>
+      <tr><td>Black keys</td><td>lit from the middle out</td><td>sand left in the upper bulb of the first timer to end</td></tr>
+      <tr><td>White keys</td><td>lit from the middle out</td><td>sand already in the lower bulb</td></tr>
+      <tr><td>Middle black → middle white key</td><td>every beat (RHYTHM) or second (TICK)</td><td>a grain falls</td></tr>
+      <tr><td>Loop key</td><td>twice a second</td><td>this key's loop is playing</td></tr>
+      <tr><td>All keys</td><td>white / black swap 4× a second</td><td>a timer is ready</td></tr>
+      <tr><td><kbd>PLAY</kbd></td><td>half of every second</td><td>timers run (blinks fast while a timer is ready)</td></tr>
+      <tr><td><kbd>REC</kbd></td><td>steady</td><td>the active timer can be reset</td></tr>
+      <tr><td><kbd>OCT −</kbd> / <kbd>+</kbd></td><td>steady</td><td>keys shifted down / up</td></tr>
+          </table>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install in five minutes</h2>
+    <p class="sub">In desktop Chrome or Edge, over USB. The original V15 firmware is inside the installer, so you can always go back.</p>
+    <ol class="steps">
+      <li><div><h3>Back up</h3><p>Export the projects, voices and samples you want to keep.</p></div></li>
+      <li><div><h3>Connect</h3><p>Switch the FM-1 on and plug it straight into the computer with a USB data cable.</p></div></li>
+      <li><div><h3>Install</h3><p>Open the <a href="install/">installer page</a>, press START and follow it. Coming from stock V15, enable force flash once.</p></div></li>
+      <li><div><h3>Cook</h3><p>The FM-1 restarts into Timer Tom. Turn <kbd>K1</kbd>, press <kbd>PLAY</kbd>.</p></div></li>
+    </ol>
+    <p style="margin-top:24px"><a class="btn primary" href="install/">OPEN THE INSTALLER ›</a></p>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <h2>Good to know</h2>
+    <div class="warn"><strong>BETA 0.1 · not yet tested on hardware.</strong> Timer Tom is a fork of Drum Peter, which is tested on an original M-VAVE FM-1 (FCC ID: 2ARCP-FM1). Every Timer Tom build passes host tests that run its real screen code and render its sound. Back up before you install.</div>
+    <div class="grid2" style="margin-top:18px">
+      <div class="card"><h3>Timers live in memory</h3><p>Timers are not saved. Switching off the FM-1 clears them, like any kitchen timer without batteries.</p></div>
+      <div class="card"><h3>Sound engine</h3><p>Loops and the alarm are DX7 voices of M-VAVE's FM1 Open V14 library, played by its own sequencer; the groove is four tracks of its 808, the tick its rimshot. Track 8 is off.</p></div>
+      <div class="card"><h3>Lights are on or off</h3><p>The panel cannot dim a light, so the hourglass is drawn with how many keys are lit and with a moving grain.</p></div>
+      <div class="card"><h3>Not a safety device</h3><p>Use it for cooking, not for anything where a missed alarm could hurt someone. Keep the FM-1 powered while timers run.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Timer Tom by BULØKE · code written together with Claude · built on FM1 Open</span>
+    <span>GPL-3.0 with the FM1 SDK linking exception · not affiliated with M-VAVE · no phone maker's logo or name is used</span>
+  </div>
+</footer>
+</body>
+</html>

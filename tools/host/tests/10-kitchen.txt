@@ -1,0 +1,138 @@
+# Timer Tom: boot, set four timers, start, hold PLAY for all, let timer 1 ring, stop it, reset.
+startup 600
+shot boot
+wait 1500
+shot empty
+turn 2 1
+turn 2 1
+turn 2 1
+turn 2 1
+shot k1-20s
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 6 1
+turn 6 1
+turn 6 1
+shot k2-set
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+turn 5 1
+shot k4-set
+button 12 1
+wait 300
+shot hold
+wait 400
+button 12 0
+wait 100
+shot all-run
+wait 4010
+shot running
+wait 120
+shot grain
+hit 9
+key 12 1
+wait 300
+shot keys
+key 12 0
+wait 16500
+shot k1-ready
+wait 300
+shot k1-ready-b
+tap 12
+shot alarm-off
+tap 13
+shot reset
+tap 1
+turn 0 1
+turn 1 1
+shot sound
+expect-led 13 0

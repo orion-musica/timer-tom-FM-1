@@ -1,0 +1,28 @@
+# Timer Tom sound: silence, rhythm layers as timers start, a key loop, the alarm, the tick.
+boot
+wait 500
+tracks
+peak 500
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+turn 3 1
+tap 12
+wav hat 2100
+turn 2 1
+turn 2 1
+turn 2 1
+turn 2 1
+tap 12
+wav kick-hat 2100
+hit 7
+wav loop 4000
+hit 7
+wav loop-off 1500
+wait 9000
+wav alarm 5000
+tap 12
+turn 1 -1
+wav tick 3000

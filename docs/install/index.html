@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Timer Tom on the M-VAVE FM-1</title>
+<meta name="description" content="Installer page for Timer Tom, free open-source kitchen timer firmware (four timers, ambient keys) for the M-VAVE FM-1. Requirements, steps, downloads and the way back to stock V15.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#c7f0d8;--panel:#b5e2c4;--line:#8fb49a;--ink:#43523d;--text:#2b3627;--dim:#4d5e48;--pixel:'Silkscreen',monospace;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:16px;line-height:1.6}
+a{color:var(--text);text-decoration-thickness:2px}a:hover{color:#000}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+code{background:var(--panel);padding:1px 6px;font-size:.95em;word-break:break-all}
+nav{border-bottom:3px solid var(--ink)}
+nav .wrap{display:flex;align-items:center;gap:18px;min-height:56px;flex-wrap:wrap}
+nav .brand{font-family:var(--pixel);font-weight:700;font-size:20px;text-decoration:none;letter-spacing:1px}
+nav .links{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap;font-size:14px}
+nav .links a{color:var(--dim);text-decoration:none}nav .links a:hover{color:var(--text)}
+header.hero{padding:56px 0 40px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--pixel);letter-spacing:3px;font-size:14px;margin:0 0 12px}
+h1{font-family:var(--pixel);font-weight:700;font-size:clamp(36px,6vw,64px);line-height:1.05;margin:0 0 18px;letter-spacing:1px}
+.lead{font-size:18px;max-width:640px;margin:0 0 28px}
+h2{font-family:var(--pixel);font-size:26px;margin:0 0 14px;letter-spacing:1px}
+h3{font-family:var(--pixel);font-size:16px;margin:0 0 6px;letter-spacing:1px}
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+.sub{color:var(--dim);max-width:700px;margin:0 0 26px}
+.console{border:4px solid var(--ink);background:var(--panel);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.console>div{padding:22px}
+.console .left{border-right:3px solid var(--ink);display:flex;flex-direction:column;gap:16px}
+.lcd{background:var(--bg);border:3px solid var(--ink);padding:14px 16px;font-family:var(--pixel);font-size:14px;line-height:1.7}
+.lcd .bars{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px;height:20px}
+.lcd .bars i{display:inline-block;width:6px;margin-right:3px;background:var(--ink)}
+.state{font-size:22px;font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;font-family:var(--pixel);font-size:16px;text-decoration:none;border:3px solid var(--ink);color:var(--text);background:transparent}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.primary:hover{background:#000;color:var(--bg)}
+.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.checks li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.checks .mark{font-family:var(--pixel);min-width:44px;text-align:center;border:2px solid var(--ink);padding:0 4px;font-size:12px;line-height:22px}
+.checks .ok .mark{background:var(--ink);color:var(--bg)}
+.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:14px;margin:0}
+.facts dt{font-family:var(--pixel);font-size:12px;padding-top:3px}
+.facts dd{margin:0;word-break:break-all}
+.warn{border:3px dashed var(--ink);padding:16px 18px;background:var(--bg);font-size:15px}
+.warn strong{font-family:var(--pixel);font-weight:700;letter-spacing:1px}
+.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:14px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;border:3px solid var(--ink);padding:16px;background:var(--panel)}
+.steps li::before{content:counter(s);font-family:var(--pixel);font-size:30px;font-weight:700;line-height:1;text-align:center;background:var(--ink);color:var(--bg);padding:10px 0;height:fit-content}
+.steps p{margin:0;font-size:15px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{border:3px solid var(--ink);padding:18px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--text);background:var(--bg)}
+a.card:hover{background:var(--panel)}
+.card .d{font-size:14px;color:var(--dim)}
+.faq details{border-bottom:2px dashed var(--ink);padding:12px 0}
+.faq summary{cursor:pointer;font-weight:600;min-height:32px}
+.faq p{margin:8px 0 0;font-size:15px}
+footer{padding:32px 0 56px;font-size:14px;color:var(--dim)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+@media (max-width:820px){.console{grid-template-columns:minmax(0,1fr)}.console .left{border-right:0;border-bottom:3px solid var(--ink)}.grid3{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="../">TIMER TOM</a>
+    <div class="links">
+      <a href="#install">Install</a><a href="#steps">Steps</a><a href="../manual/">Manual</a><a href="#downloads">Files</a><a href="#stock">Back to stock</a><a href="#help">Help</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">INSTALLER · M-VAVE FM-1</p>
+    <h1>Install Timer Tom</h1>
+    <p class="lead">Free, open-source kitchen timer firmware for the FM-1: four timers on four knobs and ambient sounds on the keys. Everything happens in your browser over USB-MIDI: no drivers, no apps. The original V15 firmware is built into the installer, so you can always go back.</p>
+    <div class="warn"><strong>BETA 0.1 · not yet tested on hardware.</strong> Timer Tom shares its platform code with Drum Peter, which is tested on an original M-VAVE FM-1 (FCC ID: 2ARCP-FM1); Timer Tom itself still has to be tried on the device. It is a beta: you install it at your own risk. Back up first and keep the FM-1 powered and connected until the installer says it is done.</div>
+  </div>
+</header>
+
+<main>
+<section id="install">
+  <div class="wrap">
+    <h2>Installer</h2>
+    <p class="sub">This page checks your browser and the build, then opens the installer.</p>
+    <div class="console">
+      <div class="left">
+        <div class="lcd" aria-live="polite">
+          <div class="bars" aria-hidden="true">
+            <span><i style="height:5px"></i><i style="height:9px"></i><i style="height:13px"></i><i style="height:17px"></i></span>
+            <span><i style="height:17px"></i><i style="height:13px"></i><i style="height:9px"></i><i style="height:5px"></i></span>
+          </div>
+          <div class="state" id="state">CHECKING…</div>
+          <div id="state-note">Please wait.</div>
+        </div>
+        <a class="btn primary" id="start" href="flasher.html" aria-disabled="true">START INSTALLER ›</a>
+        <p style="margin:0;font-size:14px" id="start-note">The installer opens in this tab. Use desktop Chrome or Edge.</p>
+      </div>
+      <div>
+        <h3>Ready check</h3>
+        <ul class="checks">
+          <li id="c-build"><span class="mark">…</span><span>Firmware built and included</span></li>
+          <li id="c-midi"><span class="mark">…</span><span>Browser supports Web MIDI</span></li>
+          <li id="c-secure"><span class="mark">…</span><span>Page opened over https or localhost</span></li>
+          <li id="c-desk"><span class="mark">…</span><span>Desktop computer, not a phone</span></li>
+        </ul>
+        <h3 style="margin-top:22px">This build</h3>
+        <dl class="facts">
+          <dt>FILE</dt><dd>timer-tom.fwsc</dd>
+          <dt>SIZE</dt><dd id="f-size">–</dd>
+          <dt>BUILT</dt><dd id="f-date">–</dd>
+          <dt>SHA-256</dt><dd id="f-hash">–</dd>
+          <dt>BASE</dt><dd>FM1 Open V14 engine</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What you need</h2>
+    <div class="grid3">
+      <div class="card"><h3>FM-1</h3><span class="d">Any M-VAVE FM-1, on stock V15 or an FM1 Open build. Charged or on USB power.</span></div>
+      <div class="card"><h3>USB data cable</h3><span class="d">A cable that carries data, not just power. Plug it straight into the computer, not a hub.</span></div>
+      <div class="card"><h3>Chrome or Edge</h3><span class="d">On Windows, macOS or Linux. Allow MIDI and SysEx when the browser asks.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="steps">
+  <div class="wrap">
+    <h2>Steps</h2>
+    <p class="sub">About five minutes. The installer guides you, but here is the whole route.</p>
+    <ol class="steps">
+      <li><div><h3>Back up</h3><p>Export the projects, voices and samples you want to keep. Keep a copy of the original <code>FM-1.fwsc</code> from M-VAVE's download page. Close DAWs and other MIDI apps.</p></div></li>
+      <li><div><h3>Connect</h3><p>Switch the FM-1 on, plug in the USB cable, press <b>START INSTALLER</b>, then <b>Connect device</b>. Allow MIDI / SysEx.</p></div></li>
+      <li><div><h3>First time from stock V15</h3><p>The installer sees <code>FM-1_015</code>. Click <b>Enable force flash and reconnect</b>. This only reconnects; nothing is written yet. Coming from FM1 Open? Skip this step.</p></div></li>
+      <li><div><h3>Install</h3><p>Tick the backup confirmation, click <b>Force flash</b> (or <b>Install</b>) and accept the warning. Do not unplug or switch off while it writes.</p></div></li>
+      <li><div><h3>Check samples and play</h3><p>Wait for the sample check to finish. If samples are not ready, restore the sample bank in <b>Projects &amp; sounds</b>; do not flash again. The FM-1 restarts into the Timer Tom boot screen. The KITCHEN page with four empty timers opens.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section id="downloads">
+  <div class="wrap">
+    <h2>Files</h2>
+    <p class="sub">Everything is open. Check the firmware against its SHA-256 before installing by hand.</p>
+    <div class="grid3">
+      <a class="card" href="flasher.html"><h3>Web installer</h3><span class="d">One HTML file with Timer Tom and stock V15 inside. Save it to install offline.</span></a>
+      <a class="card" href="../downloads/timer-tom.fwsc" download><h3>timer-tom.fwsc</h3><span class="d">The firmware package on its own.</span></a>
+      <a class="card" href="../downloads/SHA256SUMS.txt"><h3>SHA256SUMS</h3><span class="d">Checksum of the firmware package.</span></a>
+      <a class="card" href="../manual/"><h3>Manual</h3><span class="d">Every control, screen and blink code, step by step.</span></a>
+      <a class="card" id="src" href="../#build"><h3>Source code</h3><span class="d">Full source, GPL-3.0 with the SDK linking exception.</span></a>
+      <a class="card" href="../"><h3>About Timer Tom</h3><span class="d">What it is, screens and features.</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="stock">
+  <div class="wrap">
+    <h2>Back to stock</h2>
+    <p class="sub" style="margin-bottom:14px">Changed your mind? Open the installer and click <b>Restore original V15</b>. It installs the original firmware and restores all 128 factory voices across four banks.</p>
+    <div class="warn">Timer Tom projects and samples do not work on stock firmware. Export them first. To come back to Timer Tom later, use force flash again.</div>
+  </div>
+</section>
+
+<section id="help" class="faq">
+  <div class="wrap">
+    <h2>Help</h2>
+    <details><summary>The browser does not find the FM-1</summary><p>Close other MIDI apps and installer tabs, switch the FM-1 off and on, reconnect USB and click Connect again. Open Connection details in the installer to see which MIDI ports the browser found.</p></details>
+    <details><summary>START is greyed out</summary><p>The ready check shows why. Wrong browser: use desktop Chrome or Edge (Safari, Firefox and phones have no Web MIDI). Opened as a file: run <code>OPEN-SITE.bat</code> so the page runs on localhost.</p></details>
+    <details><summary>The update stopped halfway</summary><p>Keep the cable in, power-cycle the FM-1, reconnect and run the installer again with force flash.</p></details>
+    <details><summary>It says NOT BUILT</summary><p>The firmware has to be compiled once. On Windows run <code>INSTALL-TIMER-TOM.bat</code> in the project folder. It builds Timer Tom and opens this page on <code>http://localhost:8766</code>.</p></details>
+    <details><summary>Will I lose my projects?</summary><p>An update with the same storage layout keeps valid project slots and the sample bank. Switching from stock V15 does not. Back up either way.</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Timer Tom by BULØKE · code written together with Claude · built on FM1 Open</span>
+    <span>GPL-3.0 · not affiliated with M-VAVE · no phone maker's logo or name is used</span>
+  </div>
+</footer>
+
+<script src="../assets/build-info.js"></script>
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function mark(id, ok) {
+    var li = $(id); li.className = ok ? 'ok' : '';
+    li.querySelector('.mark').textContent = ok ? 'OK' : 'NO';
+    return ok;
+  }
+  /* Source link: derived from the GitHub Pages address (user.github.io/repo). */
+  var host = location.hostname, parts = location.pathname.split('/').filter(Boolean);
+  if (/\.github\.io$/.test(host) && parts.length) $('src').href = 'https://github.com/' + host.split('.')[0] + '/' + parts[0];
+
+  var build = window.DP_BUILD;
+  var built = mark('c-build', !!(build && build.built));
+  var midi = mark('c-midi', typeof navigator.requestMIDIAccess === 'function');
+  var secure = mark('c-secure', window.isSecureContext === true && location.protocol !== 'file:');
+  var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  mark('c-desk', !mobile);
+
+  if (built) {
+    $('f-size').textContent = (build.bytes / 1024).toFixed(1) + ' KB';
+    $('f-date').textContent = build.date;
+    $('f-hash').textContent = build.sha256;
+  }
+  var state, note, start = $('start');
+  if (!built) {
+    state = 'NOT BUILT'; note = 'Compile once with INSTALL-TIMER-TOM.bat (see Help).';
+  } else if (!midi || mobile) {
+    state = 'WRONG BROWSER'; note = 'Open this page in desktop Chrome or Edge.';
+  } else if (!secure) {
+    state = 'OPEN VIA SERVER'; note = 'Run OPEN-SITE.bat, or use the https site.';
+  } else {
+    state = 'READY'; note = 'Connect the FM-1 and press START.';
+    start.setAttribute('aria-disabled', 'false');
+  }
+  if (built && start.getAttribute('aria-disabled') === 'true') {
+    $('start-note').textContent = 'You can still save the installer from Files and open it in a supported browser.';
+  }
+  $('state').textContent = state;
+  $('state-note').textContent = note;
+})();
+</script>
+</body>
+</html>
