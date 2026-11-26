@@ -33,8 +33,8 @@
 A kitchen multi-timer for cooking several dishes at once. All four timers stay on one screen with
 their dish icons, the time left and a bar that empties like sand. The bottom lines always say which
 knobs and buttons work. While the food cooks, every running timer plays one element of a soft, blurred ambient-techno
-groove (timer 1 the kick, 2 an open hat, 3 a rim with dub echo, 4 a shaker), every key starts a long
-looped melodic background line, and the keyboard lights show an hourglass with a grain falling on every
+groove (timer 1 the kick, 2 an open hat, 3 a rim with dub echo, 4 a shaker), every key starts a calm, slow
+looped melodic background line that moves on to the next key by itself after a while, and the keyboard lights show an hourglass with a grain falling on every
 beat. Instead of the groove you can have a plain soft clock tick.
 
 The sequencer and sound engines are M-VAVE's FM1 Open library. Timer Tom changes the app layer only:
@@ -51,7 +51,8 @@ the KITCHEN page (`app/kitchen.inc`), the start screen and the hooks in `app/scr
 | `REC` | Reset the active timer to its time; again to clear it |
 | `SELECT` | Sound of the loops: glass pad, strings, warm pad, choir |
 | `ALGORITHM` | SILENT, TICK 1, TICK 2 or RHYTHM (one drum per running timer, the default) |
-| Keys | Each of the 27 keys starts its own 4-bar melodic loop; the same key stops it, another key switches |
+| Keys | Each of the 27 keys starts its own calm 4-bar loop; the same key stops it, another key switches. After four rounds (about 33 s) the loop moves on to the next key by itself |
+| `HOME` | Stop the loop |
 | `OCT −` / `OCT +` | Transpose the loop by octaves |
 | `HOME` + `PLAY` | Stop all sounds |
 
@@ -75,15 +76,12 @@ the KITCHEN page (`app/kitchen.inc`), the start screen and the hooks in `app/scr
 | T1 | DX7 (factory SYN PAD 6, STRING 5, SYN PAD 4, VOICE 8) | Key loops on the engine sequencer: 64 steps, eight tied notes; slow sine LFO, slow attack, long release, reverb and delay |
 | T2 | DRUM 808 rimshot, short and high | The tick (TICK modes), tick-tock velocities, a little clearer in the last 10 s |
 | T3 | DX7 KALIMBA | Alarm: a three-note motif per timer every 2.4 s, for 3 minutes |
-| T4 | DRUM 808 kick, long and dark | Timer 1: four on the floor |
-| T5 | DRUM 808 open hat, lots of reverb | Timer 2: offbeats |
-| T6 | DRUM 808 rim, dub delay | Timer 3: syncopated |
-| T7 | DRUM 808 closed hat as a shaker | Timer 4: sixteenths, the soft ones with 5/8 chance |
+| T4 | DRUM 808, one lane per timer | Timer 1: long dark kick, four on the floor · 2: open hat on the offbeats, lots of reverb · 3: rim with dub delay · 4: maracas in sixteenths |
 
-118 BPM with a little swing. A layer plays while its timer runs and stops when it is paused or ready
-(the alarm then tells which one). The loops are written from the key: its own root note (an octave
-down), one of nine contours, three rhythms and three scales (minor pentatonic, dorian, lydian).
-Track 8 is off. Timers and loops are not saved; switching off clears them.
+118 BPM with a little swing. A timer's drum lane is written into the pattern while it runs and cleared when it is paused or
+ready (the alarm then tells which one); empty lanes cost no voices, so the CPU stays low. The loops
+all stay in one key (A minor / C major pentatonic, no half steps): one long tied note per bar, moving
+mostly by step, with almost no pitch wobble, so they stay calm in the background. Tracks 5–8 are off. Timers and loops are not saved; switching off clears them.
 
 ## Installation
 

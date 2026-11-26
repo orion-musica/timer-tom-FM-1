@@ -1,0 +1,9 @@
+# Timer Tom key loops: a key starts its loop, after four rounds it moves to the next key, HOME stops it.
+boot
+wait 300
+hit 7
+shot loop-8
+wait 33500
+shot loop-9
+tap 8
+shot loop-off

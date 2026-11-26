@@ -134,7 +134,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
       <div class="card"><h3>Start one or all</h3><p><kbd>PLAY</kbd> starts or pauses the active timer. Hold <kbd>PLAY</kbd> to start every timer that is set.</p></div>
       <div class="card"><h3>Hourglass lights</h3><p>Black keys are the upper bulb, white keys the lower one. Every second a grain falls from the middle black key to the middle white key.</p></div>
       <div class="card"><h3>One drum per timer</h3><p>Start timer 1 and a soft kick plays; timer 2 adds an open hat, 3 a rim with dub echo, 4 a shaker. Blurred with reverb, 118 BPM. Or a plain soft tick, on <kbd>ALGORITHM</kbd>.</p></div>
-      <div class="card"><h3>27 key loops</h3><p>Every key starts its own four-bar melodic loop of long tied pad notes; the same key stops it. Four sounds with a slow LFO on <kbd>SELECT</kbd>.</p></div>
+      <div class="card"><h3>27 calm key loops</h3><p>Every key starts its own slow four-bar loop of long pad notes, all in one gentle key; the same key or <kbd>HOME</kbd> stops it. After about half a minute it moves on to the next key by itself.</p></div>
       <div class="card"><h3>Gentle alarm</h3><p>A ready timer chimes a short kalimba motif of its own, so you can hear which dish is done. Its row blinks.</p></div>
       <div class="card"><h3>Hints on screen</h3><p>The three bottom lines always say which knobs and buttons work and what PLAY will do next.</p></div>
       <div class="card"><h3>Phone-style screen</h3><p>The two-tone LCD look of DAW DANNY and DRUM PETER. No logos.</p></div>
@@ -170,7 +170,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
       <tr><td><kbd>REC</kbd></td><td>Reset the active timer to its time; press again to clear it</td></tr>
       <tr><td><kbd>SELECT</kbd></td><td>Sound of the loops: glass pad, strings, warm pad, choir</td></tr>
       <tr><td><kbd>ALGORITHM</kbd></td><td>SILENT, TICK 1, TICK 2, RHYTHM (one drum per running timer)</td></tr>
-      <tr><td>Keys</td><td>Start that key's loop; the same key stops it</td></tr>
+      <tr><td>Keys</td><td>Start that key's loop; the same key stops it. After four rounds it moves to the next key</td></tr>
+      <tr><td><kbd>HOME</kbd></td><td>Stop the loop</td></tr>
       <tr><td><kbd>OCT −</kbd> / <kbd>OCT +</kbd></td><td>Transpose the loop (−2 … +2 octaves)</td></tr>
       <tr><td><kbd>HOME</kbd> + <kbd>PLAY</kbd></td><td>Stop all sounds</td></tr>
     </table>
@@ -214,7 +215,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
     <div class="warn"><strong>BETA 0.1 · not yet tested on hardware.</strong> Timer Tom is a fork of Drum Peter, which is tested on an original M-VAVE FM-1 (FCC ID: 2ARCP-FM1). Every Timer Tom build passes host tests that run its real screen code and render its sound. Back up before you install.</div>
     <div class="grid2" style="margin-top:18px">
       <div class="card"><h3>Timers live in memory</h3><p>Timers are not saved. Switching off the FM-1 clears them, like any kitchen timer without batteries.</p></div>
-      <div class="card"><h3>Sound engine</h3><p>Loops and the alarm are DX7 voices of M-VAVE's FM1 Open V14 library, played by its own sequencer; the groove is four tracks of its 808, the tick its rimshot. Track 8 is off.</p></div>
+      <div class="card"><h3>Sound engine</h3><p>Loops and the alarm are DX7 voices of M-VAVE's FM1 Open V14 library, played by its own sequencer; the groove is one track of its 808 with a drum lane per timer, the tick its rimshot. Tracks 5–8 are off.</p></div>
       <div class="card"><h3>Lights are on or off</h3><p>The panel cannot dim a light, so the hourglass is drawn with how many keys are lit and with a moving grain.</p></div>
       <div class="card"><h3>Not a safety device</h3><p>Use it for cooking, not for anything where a missed alarm could hurt someone. Keep the FM-1 powered while timers run.</p></div>
     </div>

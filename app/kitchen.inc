@@ -14,12 +14,15 @@
  *   PLAY (hold) start all timers that are set (or pause all running ones)
  *   REC         reset the selected timer; again to clear it
  *   OCT - / +   octave of the key loops        keys       start a loop (same key stops it)
+ *   HOME        stop the loop
  *
  * Sound: T1 DX7 ambient pad (slow LFO, long release, big reverb) playing the
  * key loops from the engine's own sequencer (64 steps, tied notes), T2 the 808
- * rimshot as a soft clock tick, T3 a DX7 kalimba for the alarm, T4..T7 four
- * 808 tracks of soft ambient-techno percussion: each running timer unmutes one
- * of them (timer 1 kick, 2 open hat, 3 rim echo, 4 shaker). T8 is off.
+ * rimshot as a soft clock tick, T3 a DX7 kalimba for the alarm, T4 one 808
+ * track of soft ambient-techno percussion: each running timer writes its own
+ * drum lane (timer 1 kick, 2 open hat, 3 rim echo, 4 maracas). T5..T8 off.
+ * Loops stay in one pentatonic key and move to the next key every 4 rounds;
+ * HOME stops them.
  * The keyboard lights show an hourglass of the timer that ends first: black
  * keys are the upper bulb, white keys the lower one, and a grain falls from
  * the middle black key to the middle white keys on every tick.
@@ -29,7 +32,8 @@
 /* KT_MAX_S keeps every millisecond product below 2^32 (no 64-bit division). */
 enum { KT_TIMERS = 4, KT_ICONS = 12, KT_SOUNDS = 4, KT_MAX_S = 4 * 3600, KT_RING_MS = 180000 };
 enum { KT_OFF, KT_SET, KT_RUN, KT_PAUSE, KT_DONE };
-enum { KT_PAD = 0, KT_TICK = 1, KT_BELL = 2, KT_PERC = 3, KT_USED = 7 }; /* tracks */
+enum { KT_PAD = 0, KT_TICK = 1, KT_BELL = 2, KT_PERC = 3, KT_USED = 4 }; /* tracks */
+enum { KT_LOOP_CYCLES = 4 }; /* a loop plays 4 times (about 33 s), then moves to the next key */
 enum { KT_SILENT, KT_TICK1, KT_TICK2, KT_RHYTHM, KT_MODES, KT_TEMPO = 118 };
 enum { KT_C_HEAD, KT_C_ROW, KT_C_LINE = KT_C_ROW + KT_TIMERS, KT_C_COUNT = KT_C_LINE + 3 };
 _Static_assert(KT_C_COUNT < 16, "KITCHEN page cache slots");
@@ -53,10 +57,10 @@ static const uint16_t kt_icons[KT_ICONS][16] = {
 static const char kt_icon_names[KT_ICONS][7] = {"EGGS", "PASTA", "RICE", "POTATO", "SOUP", "MEAT", "FISH", "PIZZA", "CAKE", "BREAD", "VEG", "TEA"};
 
 static const struct { uint8_t program; char name[11]; uint8_t speed, pmd, amd; } kt_sounds[KT_SOUNDS] = {
-    {23, "GLASS PAD", 10, 6, 40}, /* factory SYN PAD 6 */
-    {82, "STRINGS", 8, 5, 30},    /* STRING 5 */
-    {15, "WARM PAD", 12, 4, 45},  /* SYN PAD 4 */
-    {95, "CHOIR", 9, 7, 35},      /* VOICE 8 */
+    {23, "GLASS PAD", 8, 2, 30}, /* factory SYN PAD 6; barely any pitch wobble */
+    {82, "STRINGS", 7, 2, 24},   /* STRING 5 */
+    {15, "WARM PAD", 9, 1, 34},  /* SYN PAD 4 */
+    {95, "CHOIR", 7, 2, 26},     /* VOICE 8 */
 };
 /* Alarm chime of each timer, so the kitchen can hear which one is ready. */
 static const uint8_t kt_chimes[KT_TIMERS][3] = {{76, 79, 84}, {74, 78, 81}, {72, 76, 79}, {79, 83, 86}};
@@ -64,30 +68,33 @@ static const uint8_t kt_black[11] = {1, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25};
 /* Sand order: upper bulb drains from the edges, lower bulb piles up from the middle. */
 static const uint8_t kt_top_order[11] = {5, 4, 6, 3, 7, 2, 8, 1, 9, 0, 10};
 static const uint8_t kt_low_order[16] = {7, 8, 6, 9, 5, 10, 4, 11, 3, 12, 2, 13, 1, 14, 0, 15};
-/* Percussion, one 808 track per timer: drum, 16 steps, two velocities
- * (even / odd step), volume, reverb and delay sends, decay, tune, tone. */
+/* Percussion: one 808 track, one drum lane per timer. A running timer writes
+ * its lane into the pattern, a stopped one clears it: muted drums would still
+ * cost voices, empty lanes cost nothing. Velocity is shared by the drums of a
+ * step, so it is constant and each drum has its own Level and sends. */
 static const struct {
-    uint8_t pad; uint16_t steps; uint8_t even, odd, volume, reverb, delay, decay, tune, tone;
+    uint8_t pad; uint16_t steps; uint8_t level, decay, tune, rev, dly;
 } kt_perc[KT_TIMERS] = {
-    {D8_BD, 0x1111, 110, 110, 127, 5, 0, 100, 46, 20}, /* kick, four on the floor, long and dark */
-    {D8_OH, 0x4444, 76, 76, 110, 12, 6, 70, 62, 64},    /* open hat on the offbeat, washed in reverb */
-    {D8_RS, 0x4848, 84, 84, 110, 8, 13, 40, 70, 64},    /* rim with dub delay */
-    {D8_CH, 0xffff, 60, 40, 104, 9, 4, 18, 94, 64},     /* shaker sixteenths, odd steps soft and uncertain */
+    {D8_BD, 0x1111, 72, 100, 46, 0, 0},   /* kick, four on the floor, long and dark */
+    {D8_OH, 0x4444, 54, 70, 62, 90, 40},   /* open hat on the offbeat, washed in reverb */
+    {D8_RS, 0x4848, 52, 40, 70, 60, 100},  /* rim with dub delay */
+    {D8_CP, 0xffff, 40, 30, 64, 50, 20},   /* maracas (the clap's second sound) in sixteenths */
 };
-/* Key loops: 64 steps, eight tied notes. Contour (degrees), rhythm and scale
- * come from the key, the root is the key itself an octave down. */
-static const uint8_t kt_contour[9][8] = {
-    {0, 2, 4, 3, 2, 1, 0, 1}, {0, 4, 3, 5, 4, 2, 3, 1}, {2, 1, 0, 1, 2, 3, 4, 3},
-    {0, 0, 3, 2, 0, 0, 4, 3}, {4, 3, 2, 0, 1, 2, 3, 2}, {0, 2, 1, 3, 2, 4, 3, 5},
-    {5, 4, 2, 3, 0, 1, 2, 1}, {0, 3, 0, 4, 0, 5, 0, 2}, {1, 2, 4, 6, 4, 2, 1, 0}};
-static const uint8_t kt_rhythm[3][8] = {
-    {0, 8, 16, 24, 32, 40, 48, 56}, {0, 6, 16, 22, 32, 38, 48, 58}, {0, 12, 16, 28, 32, 40, 44, 56}};
-static const uint8_t kt_scale[3][8] = {
-    {0, 3, 5, 7, 10, 12, 15, 17}, {0, 2, 3, 5, 7, 9, 10, 12}, {0, 2, 4, 6, 7, 9, 11, 12}};
+/* Key loops: calm and consonant. Every loop stays in one key (A minor /
+ * C major pentatonic: no half steps, nothing clashes), one long tied note per
+ * bar, mostly moving by step. Entries index kt_penta. Neighbouring keys flow
+ * into each other, so the automatic move to the next key is smooth. */
+static const uint8_t kt_penta[11] = {45, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69}; /* A2 .. A4 */
+static const uint8_t kt_lines[27][4] = {
+    {5, 4, 3, 4}, {5, 6, 5, 3}, {3, 4, 5, 4}, {5, 7, 6, 5}, {6, 5, 4, 5}, {3, 5, 6, 5}, {5, 5, 4, 3},
+    {8, 7, 6, 5}, {4, 5, 6, 7}, {5, 3, 4, 5}, {6, 7, 8, 7}, {5, 6, 7, 6}, {3, 2, 3, 5}, {7, 6, 5, 6},
+    {5, 4, 5, 6}, {8, 6, 7, 5}, {4, 3, 4, 5}, {6, 5, 6, 7}, {5, 7, 8, 7}, {3, 4, 3, 2}, {6, 6, 5, 5},
+    {7, 8, 7, 5}, {2, 3, 5, 3}, {5, 6, 8, 6}, {4, 5, 4, 3}, {6, 8, 7, 6}, {5, 3, 2, 3}};
 
 static struct { uint32_t set_ms, left_ms, end_at, done_at; uint8_t state, icon; } kt[KT_TIMERS];
 static unsigned kt_sel, kt_sound, kt_tick_level = KT_RHYTHM, kt_ready;
 static unsigned kt_loop = 255, kt_step_seen = 255; /* key of the running loop */
+static unsigned kt_lanes, kt_cycles, kt_loop_step = 255;
 static int kt_loop_octave;
 static uint32_t kt_transport_at;
 static unsigned kt_play_down, kt_play_long;
@@ -106,7 +113,8 @@ static void dp_init(void)
     kt[0].icon = 0; kt[1].icon = 1; kt[2].icon = 2; kt[3].icon = 5;
     kt_sel = kt_sound = kt_ready = kt_play_down = kt_play_long = 0;
     kt_tick_level = KT_RHYTHM; kt_focus_seen = kt_ring = -1;
-    kt_loop = kt_step_seen = 255;
+    kt_loop = kt_step_seen = kt_loop_step = 255;
+    kt_lanes = kt_cycles = 0;
     kt_tick_note = kt_bell_note = 255;
 }
 
@@ -180,7 +188,7 @@ static void kt_voice(unsigned sound)
     kt_fm(KT_PAD, 139, kt_sounds[sound].pmd);
     kt_fm(KT_PAD, 140, kt_sounds[sound].amd);
     kt_fm(KT_PAD, 142, 4); /* sine */
-    kt_fm(KT_PAD, 143, 3); /* pitch modulation sensitivity */
+    kt_fm(KT_PAD, 143, 2); /* pitch modulation sensitivity */
     for (unsigned op = 0; op < 6; ++op) {
         kt_fm(KT_PAD, op * 21U + 14U, 2U);  /* amplitude modulation sensitivity */
         kt_fm(KT_PAD, op * 21U + 0U, 45U);  /* attack rate: a slow swell */
@@ -222,21 +230,20 @@ static void kt_setup(void)
         groove_edit_clear(t, 0, 2);
         groove_sequence_length_set(t, t == KT_PAD ? 64 : 16);
     }
-    /* Percussion: patterns written once, muted until their timers run. */
+    /* Percussion voices; the lanes are written while timers run. */
     for (unsigned i = 0; i < KT_TIMERS; ++i) {
-        unsigned t = KT_PERC + i, note = groove_pad_note(t, kt_perc[i].pad);
-        kt_tone(t, kt_perc[i].pad, "Decay", kt_perc[i].decay);
-        kt_tone(t, kt_perc[i].pad, "Tune", kt_perc[i].tune);
-        kt_tone(t, kt_perc[i].pad, "Tone", kt_perc[i].tone);
-        kt_volume(t, kt_perc[i].volume);
-        kt_set_send(t, 0, kt_perc[i].reverb); kt_set_send(t, 1, kt_perc[i].delay);
-        for (unsigned step = 0; step < 16; ++step)
-            if ((kt_perc[i].steps >> step) & 1U) {
-                groove_sequence_edit(t, step, note, step & 1U ? kt_perc[i].odd : kt_perc[i].even);
-                if (i == 3 && (step & 1U)) groove_step_setting_edit(t, step, 2, 5); /* 5/8 chance */
-            }
-        groove_mix_toggle(t, 0);
+        unsigned pad = kt_perc[i].pad;
+        kt_tone(KT_PERC, pad, "Level", kt_perc[i].level);
+        kt_tone(KT_PERC, pad, "Decay", kt_perc[i].decay);
+        kt_tone(KT_PERC, pad, "Tune", kt_perc[i].tune);
+        kt_tone(KT_PERC, pad, "Rev", kt_perc[i].rev);
+        kt_tone(KT_PERC, pad, "Dly", kt_perc[i].dly);
     }
+    kt_tone(KT_PERC, D8_BD, "Tone", 20);
+    kt_tone(KT_PERC, D8_CP, "Sound", 1);  /* maracas */
+    kt_tone(KT_PERC, D8_KIT, "Choke", 0); /* no hat choke */
+    kt_volume(KT_PERC, 100);
+    kt_set_send(KT_PERC, 0, 10); kt_set_send(KT_PERC, 1, 6);
     {
         struct groove_view v = {0};
         groove_get_view(0, 0, &v);
@@ -247,7 +254,7 @@ static void kt_setup(void)
     /* The bell: kalimba, plain envelope, some reverb. */
     kt_program(KT_BELL, 117);
     kt_volume(KT_PAD, 124); kt_volume(KT_TICK, 84); kt_volume(KT_BELL, 100);
-    kt_set_send(KT_PAD, 0, 12); kt_set_send(KT_PAD, 1, 5);
+    kt_set_send(KT_PAD, 0, 12); kt_set_send(KT_PAD, 1, 2);
     kt_set_send(KT_BELL, 0, 8); kt_set_send(KT_BELL, 1, 3);
     kt_set_send(KT_TICK, 0, 0); kt_set_send(KT_TICK, 1, 0);
     /* The tick: a short, high, dry rimshot. */
@@ -271,13 +278,12 @@ static void kt_loop_write(unsigned key)
     groove_edit_clear(KT_PAD, 0, 2);
     kt_loop = key;
     kt_loop_octave = octave;
+    kt_cycles = 0;
     if (key == 255) return;
-    const uint8_t *contour = kt_contour[key % 9], *at = kt_rhythm[(key / 9) % 3], *scale = kt_scale[(key / 3) % 3];
-    int root = 41 + (int)key + octave * 12;
-    for (unsigned n = 0; n < 8; ++n) {
-        int note = clamp(root + scale[contour[n]], 24, 108);
-        groove_sequence_edit(KT_PAD, at[n], (unsigned)note, 48U + (n * 7U + key) % 22U);
-        groove_step_setting_edit(KT_PAD, at[n], 4, 1); /* tie: hold until the next note */
+    for (unsigned bar = 0; bar < 4; ++bar) {
+        unsigned step = bar * 16U, note = (unsigned)clamp(kt_penta[kt_lines[key][bar]] + octave * 12, 24, 108);
+        groove_sequence_edit(KT_PAD, step, note, 56);
+        groove_step_setting_edit(KT_PAD, step, 4, 1); /* tie: hold until the next bar */
     }
 }
 /* Tap a key: its loop starts; the same key again stops it. */
@@ -299,13 +305,31 @@ static void kt_transport(uint32_t now)
         kt_transport_at = now;
         post(want ? 0xfa : 0xfc, 0, 0, 1);
     }
-    /* Each running timer unmutes its percussion track (rhythm mode only). */
-    for (unsigned i = 0; i < KT_TIMERS; ++i) {
-        struct groove_view p = {0};
-        groove_get_view(KT_PERC + i, 0, &p);
-        unsigned mute = !(kt_tick_level == KT_RHYTHM && kt[i].state == KT_RUN);
-        if (p.muted != mute) groove_mix_toggle(KT_PERC + i, 0);
-    }
+    /* Each running timer writes its drum lane (rhythm mode only). */
+    unsigned lanes = 0;
+    for (unsigned i = 0; i < KT_TIMERS; ++i)
+        if (kt_tick_level == KT_RHYTHM && kt[i].state == KT_RUN) lanes |= 1U << i;
+    for (unsigned i = 0; i < KT_TIMERS; ++i)
+        if ((lanes ^ kt_lanes) & (1U << i)) {
+            unsigned note = groove_pad_note(KT_PERC, kt_perc[i].pad), on = (lanes >> i) & 1U;
+            for (unsigned step = 0; step < 16; ++step)
+                if ((kt_perc[i].steps >> step) & 1U) groove_sequence_edit(KT_PERC, step, note, on ? 100U : 0U);
+        }
+    kt_lanes = lanes;
+    /* The loop moves on to the next key by itself after a few rounds. Its
+     * next pattern is written in the last bar, so the new first note is on time. */
+    if (kt_loop < 27 && v.playing) {
+        struct groove_view m = {0};
+        groove_get_view(KT_PAD, 0, &m);
+        if (kt_loop_step != 255 && m.play_step < kt_loop_step) ++kt_cycles;
+        kt_loop_step = m.play_step;
+        if (kt_cycles >= KT_LOOP_CYCLES - 1U && m.play_step >= 52U) {
+            unsigned next = (kt_loop + 1U) % 27U;
+            kt_loop_write(next);
+            char n[4] = {(char)('0' + (next + 1) / 10), (char)('0' + (next + 1) % 10), 0, 0};
+            kt_say("NEXT LOOP ", 9, n, now);
+        }
+    } else kt_loop_step = 255;
     /* In rhythm mode the hourglass grain falls on every beat. */
     if (v.playing && v.play_step != kt_step_seen) {
         kt_step_seen = v.play_step;
@@ -424,6 +448,7 @@ static void kt_controls(const struct fm1_controls *c, uint32_t pressed, uint32_t
         if (kt_loop != 255 && octave != kt_loop_octave) kt_loop_write(kt_loop);
     }
     if (pressed & BUTTON(REC)) kt_reset(now);
+    if ((pressed & BUTTON(HOME)) && kt_loop != 255) { kt_loop_write(255); kt_say("LOOP OFF", 9, 0, now); }
     if (pressed & BUTTON(PLAY)) { kt_play_down = 1; kt_play_long = 0; kt_play_ms = now; }
     if (kt_play_down && !(c->buttons & BUTTON(PLAY))) {
         if (!kt_play_long) kt_tap(now);
@@ -659,7 +684,7 @@ static void dp_draw(const struct groove_view v[8])
     default: strcpy(hint, "PLAY = START   HOLD PLAY = ALL"); break;
     }
     kt_line(1, hint, 0);
-    kt_line(2, notice ? notice : "REC RESET  ALG RHYTHM  KEY=LOOP ON/OFF", notice != 0);
+    kt_line(2, notice ? notice : "REC RESET  KEY = LOOP  HOME = LOOP OFF", notice != 0);
 }
 
 /* ---- Drum Peter hooks that screen.c still calls ---------------------------- */
